@@ -1,3 +1,27 @@
+<?php
+  session_start();
+  $error="";
+  
+  require_once "koneksi.php";
+
+  if(isset($_POST['login'])){
+    $username=$_POST['username'];
+    $password=$_POST['password'];
+    
+    // cek ke database
+    $query  = "select * from user where username='$username' 
+    and `password`='$password';";
+    $result = mysqli_query($conn, $query);
+
+    if(mysqli_num_rows($result) === 1){
+      $_SESSION['login'] = true;
+      header ("Location: dashboard.php"); //untuk masuk ke dashboard
+    }else{
+      $error="Username dan password SALAH atau tidak ditemukan";
+    }
+  }
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -27,10 +51,19 @@
   <div class="card">
     <div class="card-body login-card-body">
       <p class="login-box-msg">Sign in untuk masuk ke aplikasi</p>
+      
+      <!-- tampilkan error -->
+      <?php
+        if($error != ""):
+      ?>
+      <div class="error">
+          <?= $error; ?>
+      </div>
+      <?php endif; ?>
 
       <form action="" method="post">
         <div class="input-group mb-3">
-          <input type="text" class="form-control" placeholder="Username">
+          <input type="text" name="username" class="form-control" placeholder="Username">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-envelope"></span>
@@ -38,7 +71,7 @@
           </div>
         </div>
         <div class="input-group mb-3">
-          <input type="password" class="form-control" placeholder="Password">
+          <input type="password" name="password" class="form-control" placeholder="Password">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-lock"></span>
@@ -50,7 +83,7 @@
           </div>
           <!-- /.col -->
           <div class="col-4">
-            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+            <button type="submit" name="login" class="btn btn-primary btn-block">Sign In</button>
           </div>
           <!-- /.col -->
         </div>
